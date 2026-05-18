@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import NewPlantForm from "./NewPlantForm";
-import PlantList from "./PlantList";
 import Search from "./Search";
-
+import PlantList from "./PlantList";
 
 function PlantPage() {
   const [plants, setPlants] = useState([]);
@@ -38,3 +37,5 @@ function PlantPage() {
     </main>
   );
 }
+
+export default PlantPage;

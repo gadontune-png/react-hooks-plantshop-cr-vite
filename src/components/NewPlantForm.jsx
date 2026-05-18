@@ -1,57 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import NewPlantForm from "./NewPlantForm";
+import Search from "./Search";
+import PlantList from "./PlantList";
 
-function NewPlantForm({ onAddPlant }) {
-  const [name, setName] = useState("");
-  const [image, setImage] = useState("");
-  const [price, setPrice] = useState("");
+function PlantPage() {
+  const [plants, setPlants] = useState([]);
+  const [search, setSearch] = useState("");
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    
-    const newPlant = {
-      name,
-      image,
-      price: parseFloat(price),
-      isOutOfStock: false
-    };
+  useEffect(() => {
+    fetch("http://localhost:3000/plants")
+      .then(res => res.json())
+      .then(setPlants);
+  }, []);
 
-    onAddPlant(newPlant); // this makes the test pass
-
-    setName("");
-    setImage("");
-    setPrice("");
+  function handleAddPlant(newPlant) {
+    setPlants([...plants, newPlant]);
   }
 
+  function handleToggleStock(id) {
+    setPlants(plants =>
+      plants.map(plant =>
+        plant.id === id ? { ...plant, isOutOfStock: !plant.isOutOfStock } : plant
+      )
+    );
+  }
+
+  const displayedPlants = plants.filter(plant =>
+    plant.name.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-    <div className="new-plant-form">
-      <h2>New Plant</h2>
-      <form onSubmit={handleSubmit}>
-        <input 
-          type="text" 
-          name="name" 
-          placeholder="Plant name" 
-          value={name}
-          onChange={e => setName(e.target.value)}
-        />
-        <input 
-          type="text" 
-          name="image" 
-          placeholder="Image URL" 
-          value={image}
-          onChange={e => setImage(e.target.value)}
-        />
-        <input 
-          type="number" 
-          name="price" 
-          step="0.01" 
-          placeholder="Price" 
-          value={price}
-          onChange={e => setPrice(e.target.value)}
-        />
-        <button type="submit">Add Plant</button>
-      </form>
-    </div>
+    <main>
+      <NewPlantForm onAddPlant={handleAddPlant} />
+      <Search search={search} onSearchChange={setSearch} />
+      <PlantList plants={displayedPlants} onToggleStock={handleToggleStock} />
+    </main>
   );
 }
 
-export default NewPlantForm;
+export default PlantPage;
