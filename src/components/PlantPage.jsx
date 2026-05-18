@@ -7,16 +7,19 @@ function PlantPage() {
   const [plants, setPlants] = useState([]);
   const [search, setSearch] = useState("");
 
+  // 1. Renders all plants on page load
   useEffect(() => {
     fetch("http://localhost:3000/plants")
       .then(res => res.json())
       .then(setPlants);
   }, []);
 
+  // 2. Add a new plant
   function handleAddPlant(newPlant) {
     setPlants([...plants, newPlant]);
   }
 
+  // 3. Mark plant as out of stock / in stock
   function handleToggleStock(id) {
     setPlants(plants =>
       plants.map(plant =>
@@ -25,6 +28,7 @@ function PlantPage() {
     );
   }
 
+  // 4. Filter plants by search input
   const displayedPlants = plants.filter(plant =>
     plant.name.toLowerCase().includes(search.toLowerCase())
   );
